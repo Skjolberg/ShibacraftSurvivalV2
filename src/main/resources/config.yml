@@ -1,0 +1,12 @@
+# Commands
+Wallet: true
+Discord: true
+Mapa: true
+Web: true
+Wiki: true
+Ayuda: true
+Presidente: true
+Ciudadano: true
+
+# Number of citizens allowed per city, this value is not recommended to be changed if there are already citizens in cities.
+Citizens: 11
