@@ -9,8 +9,6 @@ public class PlayerManager {
     //private final Set<UUID> pendingPlayers = new HashSet();
     private Map<UUID, UUID> requests = new HashMap();
 
-
-
     public void addPendingPlayer(UUID invitado, UUID presidente) {
         requests.put(invitado, presidente);
     }

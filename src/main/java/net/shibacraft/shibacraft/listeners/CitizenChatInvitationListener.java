@@ -16,7 +16,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import java.util.List;
 
-public class CitizenChatInvitationListener implements Listener {
+public class CitizenChatInvitationListener implements Listener{
 
     private final Shibacraft plugin;
     private final PlayerManager playerManager;
@@ -46,11 +46,11 @@ public class CitizenChatInvitationListener implements Listener {
             String suffix = "&f[&b" + ciudadesFile.getString(presidente.getName() + ".nombre") + "&f]&r";
 
             if (messagesFile.getString("InvitationAccepted").length() > 0) {
-                player.sendMessage(ChatColor.translateAlternateColorCodes('&',messagesFile.getString("InvitationAccepted")).replace("{prefix}", prefix).replace("{city}", ciudadesFile.getString(presidente.getName()+".nombre")));
+                player.sendMessage(ChatColor.translateAlternateColorCodes('&',messagesFile.getString("InvitationAccepted").replace("{prefix}", prefix).replace("{city}", ciudadesFile.getString(presidente.getName()+".nombre"))));
             }
 
             if (messagesFile.getString("HasAcceptedInvitation").length() > 0) {
-                presidente.sendMessage(messagesFile.getString("HasAcceptedInvitation").replace("{prefix}", prefix).replace("{citizen}", player.getName()));
+                presidente.sendMessage(ChatColor.translateAlternateColorCodes('&',messagesFile.getString("HasAcceptedInvitation").replace("{prefix}", prefix).replace("{citizen}", player.getName())));
             }
 
             User userInvitedLP = luckPermsAPI.getPlayerAdapter(Player.class).getUser(player);
@@ -60,9 +60,13 @@ public class CitizenChatInvitationListener implements Listener {
             ciudadesFile.set(presidente.getName() + ".ciudadanos", ciudadanos);
             ciudadesFile.set(presidente.getName() + ".restante", ciudadesFile.getInt(presidente.getName() + ".restante") - 1);
             ciudadesFile.save();
-            ciudadesFile.reload();
+            //ciudadesFile.reload();
             playerManager.removePendingPlayer(player.getUniqueId());
+            return;
         }
+
+
+        //playerManager.removePendingPlayer(player.getUniqueId());
     }
     public void addSuffix(User user, String suffix) {
         user.data().add(SuffixNode.builder(suffix, 1).build());

@@ -47,7 +47,7 @@ public class Presidente implements CommandExecutor {
 
         if (args.length > 0) {
             User userLP = luckPermsAPI.getPlayerAdapter(Player.class).getUser(user);
-            if (args[0].equalsIgnoreCase("remove") && args[1].equalsIgnoreCase("user")) {
+            if (args[0].equalsIgnoreCase("remove") && args[1].equalsIgnoreCase("user") && args.length > 2) {
                 if (!ciudadesFile.contains(user.getName())) {
                     if (messagesFile.getString("CreateCityFirst").length() > 0) {
                         user.sendMessage(ChatColor.translateAlternateColorCodes('&',
@@ -109,45 +109,72 @@ public class Presidente implements CommandExecutor {
                                 messagesFile.getString("CitizenListFooter").replace("{prefix}", prefix)));
                     }
                 }
-            } else if (args[0].equalsIgnoreCase("add") && args[1].equalsIgnoreCase("user")) {
-                if (ciudadesFile.getInt(user.getName() + ".restante") > 0) {
-                    for (Player player : Bukkit.getOnlinePlayers()) {
-                        if (args[2].equals(player.getName())) {
-                            List<String> sectionList;
-                            for (String i : ciudadesFile.getKeys(false)) {
-                                sectionList = ciudadesFile.getStringList(i + ".ciudadanos");
-                                for (String j : sectionList) {
-                                    if (args[2].equals(j)) {
-                                        if (messagesFile.getString("AlreadyHasCity").length() > 0) {
-                                            user.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                                                    messagesFile.getString("AlreadyHasCity").replace("{prefix}", prefix)));
-                                            return true;
-                                        }
-                                    }
+            } else if (args[0].equalsIgnoreCase("add") && args[1].equalsIgnoreCase("user") && args.length > 2) {
+                //String name = Bukkit.getServer().getPlayer(UUID).getName();
+                //Player invited = Bukkit.getServer().getPlayer(args[2]);
+
+                if (!ciudadesFile.contains(user.getName())) {
+                    user.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                                messagesFile.getString("CreateCityFirst").replace("{prefix}", prefix)));
+                    return true;
+                } else if (ciudadesFile.getInt(user.getName() + ".restante") == 0){
+                    user.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                            messagesFile.getString("MaxCitizens").replace("{prefix}", prefix)));
+                    return true;
+                } else if (Bukkit.getServer().getPlayer(args[2]) != null){
+                    Player invited = Bukkit.getServer().getPlayer(args[2]);
+
+                    if(playerManager.isPendingPlayer(invited.getUniqueId())){
+                        Player presidente = Bukkit.getPlayer(playerManager.getPresidentUUID(invited.getUniqueId()));
+                        if(presidente.getName().equals(user.getName())){
+                            user.sendMessage("Ya has invitado a este usuario.");
+
+                        } else if (!presidente.getName().equals(user.getName())){
+                            user.sendMessage("Este usuario ha sido invitado por otra ciudad.");
+
+                        }
+                        return true;
+                    }
+
+                    List<String> sectionList;
+                    for (String i : ciudadesFile.getKeys(false)) {
+                        sectionList = ciudadesFile.getStringList(i + ".ciudadanos");
+                        for (String j : sectionList) {
+                            if (args[2].equals(j)) {
+                                if (messagesFile.getString("AlreadyHasCity").length() > 0) {
+                                    user.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                                            messagesFile.getString("AlreadyHasCity").replace("{prefix}", prefix)));
+                                    return true;
                                 }
                             }
-                            player.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesFile.getString("HasBeenInvited").replace("{city}", ciudadesFile.getString(user.getName()+".nombre")).replace("{prefix}", prefix).replace("{president}", user.getName())));
-                            user.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesFile.getString("InvitationSent").replace("{citizen}", player.getName()).replace("{prefix}", prefix)));
-
-                            playerManager.addPendingPlayer(player.getUniqueId(), user.getUniqueId());
-                            return true;
                         }
                     }
+                    invited.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesFile.getString("HasBeenInvited").replace("{city}", ciudadesFile.getString(user.getName()+".nombre")).replace("{prefix}", prefix).replace("{president}", user.getName())));
+                    user.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesFile.getString("InvitationSent").replace("{citizen}", invited.getName()).replace("{prefix}", prefix)));
+
+                    playerManager.addPendingPlayer(invited.getUniqueId(), user.getUniqueId());
+
+                    Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+                        try {
+                            // Seconds
+                            int n = 1000 * config.getInt("Expire");
+                            Thread.sleep(n);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        playerManager.getRequests().clear();
+                    });
+                    return true;
+
+                } else {
                     if (messagesFile.getString("Offline").length() > 0) {
                         user.sendMessage(ChatColor.translateAlternateColorCodes('&',
                                 messagesFile.getString("Offline").replace("{prefix}", prefix)));
                     }
-                } else if (!ciudadesFile.contains(user.getName()) && messagesFile.getString("CreateCityFirst").length() > 0) {
-                    user.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                            messagesFile.getString("CreateCityFirst").replace("{prefix}", prefix)));
-                } else {
-                    if (messagesFile.getString("MaxCitizens").length() > 0) {
-                        user.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                                messagesFile.getString("MaxCitizens").replace("{prefix}", prefix)));
-                    }
                 }
                 return true;
-            } else if (args[0].equalsIgnoreCase("add") && args[1].equalsIgnoreCase("city")) {
+
+            } else if (args[0].equalsIgnoreCase("add") && args[1].equalsIgnoreCase("city") && args.length > 2) {
                 if (args[2].contains("&")) {
                     for (int i = 0; i < args[2].length() - 1; i++) {
                         if (args[2].charAt(i) == '&') {

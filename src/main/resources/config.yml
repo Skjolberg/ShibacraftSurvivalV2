@@ -10,3 +10,5 @@ Ciudadano: true
 
 # Number of citizens allowed per city, this value is not recommended to be changed if there are already citizens in cities.
 Citizens: 11
+# Invitation expire (seconds)
+Expire: 15

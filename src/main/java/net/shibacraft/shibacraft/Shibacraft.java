@@ -21,13 +21,11 @@ public final class Shibacraft extends JavaPlugin {
 
     public void onEnable() {
         PlayerManager playerManager = new PlayerManager();
-
         registerListeners(playerManager);
         registerFiles();
         registerConfig();
         registerCommands(playerManager);
         FileConfiguration config = getConfig();
-
         Bukkit.getConsoleSender()
                 .sendMessage(ChatColor.WHITE + "[" + nombre + "]" + " is now enabled (version: " + version + ")");
         if (config.getBoolean("Wallet")) {
