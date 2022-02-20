@@ -17,6 +17,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -26,12 +27,12 @@ public class Presidente implements CommandExecutor {
     private final LuckPerms luckPermsAPI = LuckPermsProvider.get();
     private final PlayerManager playerManager;
 
+
     public Presidente(Shibacraft plugin, PlayerManager playerManager) {
 
         this.plugin = plugin;
         this.playerManager = playerManager;
     }
-
 
     @Override
     public boolean onCommand(CommandSender sender, Command ciudadano, String label, String[] args) {
@@ -39,6 +40,7 @@ public class Presidente implements CommandExecutor {
         FileManager messagesFile = new FileManager(plugin, "messages");
         FileManager ciudadesFile = new FileManager(plugin, "ciudades");
         FileConfiguration config = plugin.getConfig();
+        BukkitScheduler scheduler = plugin.getServer().getScheduler();
 
         Player user = (Player) sender;
         List<String> ciudadanos = ciudadesFile.getStringList(user.getName() + ".ciudadanos");
@@ -153,19 +155,8 @@ public class Presidente implements CommandExecutor {
                     user.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesFile.getString("InvitationSent").replace("{citizen}", invited.getName()).replace("{prefix}", prefix)));
 
                     playerManager.addPendingPlayer(invited.getUniqueId(), user.getUniqueId());
-
-                    Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-                        try {
-                            // Seconds
-                            int n = 1000 * config.getInt("Expire");
-                            Thread.sleep(n);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        playerManager.getRequests().clear();
-                    });
+                    scheduler.runTaskLater(this.plugin, () -> playerManager.getRequests().clear(), config.getLong("Expire")*20);
                     return true;
-
                 } else {
                     if (messagesFile.getString("Offline").length() > 0) {
                         user.sendMessage(ChatColor.translateAlternateColorCodes('&',
