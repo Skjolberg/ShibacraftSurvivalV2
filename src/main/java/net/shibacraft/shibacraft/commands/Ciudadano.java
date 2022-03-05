@@ -5,7 +5,7 @@ import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.node.types.SuffixNode;
 import net.shibacraft.shibacraft.Shibacraft;
-import net.shibacraft.shibacraft.fileManager.FileManager;
+import net.shibacraft.shibacraft.manager.files.YamlManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -28,8 +28,8 @@ public class Ciudadano implements CommandExecutor, Listener {
     public boolean onCommand(CommandSender sender, Command ciudadano, String label, String[] args) {
 
         Player user = (Player) sender;
-        FileManager messagesFile = new FileManager(plugin, "messages");
-        FileManager ciudadesFile = new FileManager(plugin, "ciudades");
+        YamlManager messagesFile = new YamlManager(plugin, "messages");
+        YamlManager ciudadesFile = new YamlManager(plugin, "ciudades");
         final String prefix = messagesFile.getString("Prefix");
 
         if (args.length > 0) {
@@ -72,7 +72,7 @@ public class Ciudadano implements CommandExecutor, Listener {
         user.data().remove(SuffixNode.builder(suffix, 1).build());
         luckPermsAPI.getUserManager().saveUser(user);
     }
-    public void commandUsage(Player p, FileManager f){
+    public void commandUsage(Player p, YamlManager f){
         if (!f.getStringList("UsageCitizen").isEmpty()) {
             List<String> usageCommand;
             usageCommand = f.getStringList("UsageCitizen");

@@ -3,7 +3,7 @@ package net.shibacraft.shibacraft.commands;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.shibacraft.shibacraft.Shibacraft;
-import net.shibacraft.shibacraft.fileManager.FileManager;
+import net.shibacraft.shibacraft.manager.files.YamlManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -30,8 +30,8 @@ public class Wallet implements CommandExecutor {
             return false;
         } else {
             Player user = (Player) sender;
-            FileManager fileManager = new FileManager(plugin, "wallet");
-            FileManager messagesFile = new FileManager(plugin, "messages");
+            YamlManager fileManager = new YamlManager(plugin, "wallet");
+            YamlManager messagesFile = new YamlManager(plugin, "messages");
             final String prefix = messagesFile.getString("Prefix");
 
             if (args.length > 0) {

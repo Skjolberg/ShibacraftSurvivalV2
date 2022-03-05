@@ -6,8 +6,8 @@ import net.luckperms.api.model.user.User;
 import net.luckperms.api.model.user.UserManager;
 import net.luckperms.api.node.types.SuffixNode;
 import net.shibacraft.shibacraft.Shibacraft;
-import net.shibacraft.shibacraft.fileManager.FileManager;
-import net.shibacraft.shibacraft.playerManager.PlayerManager;
+import net.shibacraft.shibacraft.manager.files.YamlManager;
+import net.shibacraft.shibacraft.manager.players.PlayerInvitationManager;
 import net.shibacraft.shibacraft.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -25,27 +25,26 @@ import java.util.concurrent.CompletableFuture;
 public class Presidente implements CommandExecutor {
     private final Shibacraft plugin;
     private final LuckPerms luckPermsAPI = LuckPermsProvider.get();
-    private final PlayerManager playerManager;
+    private final PlayerInvitationManager playerManager;
 
 
-    public Presidente(Shibacraft plugin, PlayerManager playerManager) {
+    public Presidente(Shibacraft plugin, PlayerInvitationManager playerManager) {
 
         this.plugin = plugin;
         this.playerManager = playerManager;
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command ciudadano, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, Command presidenteCommand, String label, String[] args) {
 
-        FileManager messagesFile = new FileManager(plugin, "messages");
-        FileManager ciudadesFile = new FileManager(plugin, "ciudades");
+        YamlManager messagesFile = new YamlManager(plugin, "messages");
+        YamlManager ciudadesFile = new YamlManager(plugin, "ciudades");
         FileConfiguration config = plugin.getConfig();
         BukkitScheduler scheduler = plugin.getServer().getScheduler();
 
         Player user = (Player) sender;
         List<String> ciudadanos = ciudadesFile.getStringList(user.getName() + ".ciudadanos");
         final String prefix = messagesFile.getString("Prefix");
-
 
         if (args.length > 0) {
             User userLP = luckPermsAPI.getPlayerAdapter(Player.class).getUser(user);
@@ -87,6 +86,33 @@ public class Presidente implements CommandExecutor {
                     }
                 }
                 return true;
+            } else if (args[0].equalsIgnoreCase("remove") && args[1].equalsIgnoreCase("city") && args.length == 2) {
+                if (!ciudadesFile.contains(user.getName())) {
+                    if (messagesFile.getString("CreateCityFirst").length() > 0) {
+                        user.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                                messagesFile.getString("CreateCityFirst").replace("{prefix}", prefix)));
+                    }
+                    return true;
+                } else {
+                    String suffix = "&f[&b" + ciudadesFile.getString(user.getName() + ".displayname") + "&f]&r";
+                    for (String i : ciudadanos) {
+                        UserManager userManager = luckPermsAPI.getUserManager();
+
+                        OfflinePlayer player = Bukkit.getOfflinePlayer(i);
+                        CompletableFuture<User> userFuture = userManager.loadUser(player.getUniqueId());
+
+                        userFuture.thenAcceptAsync(userI -> {
+                            removeSuffix(userI, suffix);
+                        });
+
+                    }
+                    user.sendMessage("Se han removido todos los usuarios");
+                    ciudadesFile.set(user.getName(), null);
+                    ciudadesFile.save();
+                    ciudadesFile.reload();
+                }
+                return true;
+
             } else if (args[0].equalsIgnoreCase("list")) {
                 if (ciudadanos.isEmpty()) {
                     if (messagesFile.getString("ListEmpty").length() > 0) {
@@ -117,21 +143,21 @@ public class Presidente implements CommandExecutor {
 
                 if (!ciudadesFile.contains(user.getName())) {
                     user.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                                messagesFile.getString("CreateCityFirst").replace("{prefix}", prefix)));
+                            messagesFile.getString("CreateCityFirst").replace("{prefix}", prefix)));
                     return true;
-                } else if (ciudadesFile.getInt(user.getName() + ".restante") == 0){
+                } else if (ciudadesFile.getInt(user.getName() + ".restante") == 0) {
                     user.sendMessage(ChatColor.translateAlternateColorCodes('&',
                             messagesFile.getString("MaxCitizens").replace("{prefix}", prefix)));
                     return true;
-                } else if (Bukkit.getServer().getPlayer(args[2]) != null){
+                } else if (Bukkit.getServer().getPlayer(args[2]) != null) {
                     Player invited = Bukkit.getServer().getPlayer(args[2]);
 
-                    if(playerManager.isPendingPlayer(invited.getUniqueId())){
+                    if (playerManager.isPendingPlayer(invited.getUniqueId())) {
                         Player presidente = Bukkit.getPlayer(playerManager.getPresidentUUID(invited.getUniqueId()));
-                        if(presidente.getName().equals(user.getName())){
+                        if (presidente.getName().equals(user.getName())) {
                             user.sendMessage("Ya has invitado a este usuario.");
 
-                        } else if (!presidente.getName().equals(user.getName())){
+                        } else if (!presidente.getName().equals(user.getName())) {
                             user.sendMessage("Este usuario ha sido invitado por otra ciudad.");
 
                         }
@@ -151,11 +177,11 @@ public class Presidente implements CommandExecutor {
                             }
                         }
                     }
-                    invited.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesFile.getString("HasBeenInvited").replace("{city}", ciudadesFile.getString(user.getName()+".nombre")).replace("{prefix}", prefix).replace("{president}", user.getName())));
+                    invited.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesFile.getString("HasBeenInvited").replace("{city}", ciudadesFile.getString(user.getName() + ".nombre")).replace("{prefix}", prefix).replace("{president}", user.getName())));
                     user.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesFile.getString("InvitationSent").replace("{citizen}", invited.getName()).replace("{prefix}", prefix)));
 
                     playerManager.addPendingPlayer(invited.getUniqueId(), user.getUniqueId());
-                    scheduler.runTaskLater(this.plugin, () -> playerManager.getRequests().clear(), config.getLong("Expire")*20);
+                    scheduler.runTaskLater(this.plugin, () -> playerManager.getRequests().remove(invited.getUniqueId(), user.getUniqueId()), config.getLong("Expire") * 20);
                     return true;
                 } else {
                     if (messagesFile.getString("Offline").length() > 0) {
@@ -230,7 +256,7 @@ public class Presidente implements CommandExecutor {
         luckPermsAPI.getUserManager().saveUser(user);
     }
 
-    public void commandUsage(Player p, FileManager f) {
+    public void commandUsage(Player p, YamlManager f) {
         List<String> usageCommand;
         usageCommand = f.getStringList("UsagePresident");
         if (!usageCommand.isEmpty()) {

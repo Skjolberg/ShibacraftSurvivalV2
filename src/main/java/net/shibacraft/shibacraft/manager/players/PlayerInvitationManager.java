@@ -1,10 +1,10 @@
-package net.shibacraft.shibacraft.playerManager;
+package net.shibacraft.shibacraft.manager.players;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class PlayerManager {
+public class PlayerInvitationManager {
 
     //private final Set<UUID> pendingPlayers = new HashSet();
     private Map<UUID, UUID> requests = new HashMap();

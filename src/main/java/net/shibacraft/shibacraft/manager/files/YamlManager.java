@@ -1,4 +1,4 @@
-package net.shibacraft.shibacraft.fileManager;
+package net.shibacraft.shibacraft.manager.files;
 
 import net.shibacraft.shibacraft.Shibacraft;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -8,14 +8,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 
-public class FileManager extends YamlConfiguration {
+public class YamlManager extends YamlConfiguration {
 
     private final String fileName;
     private final Shibacraft plugin;
     private File file;
     private File folder;
 
-    public FileManager(Shibacraft plugin, String fileName, File folder) {
+    public YamlManager(Shibacraft plugin, String fileName, File folder) {
         this.folder = folder;
         this.plugin = plugin;
         this.fileName = fileName + (fileName.endsWith(".yml") ? "" : ".yml");
@@ -23,7 +23,7 @@ public class FileManager extends YamlConfiguration {
 
     }
 
-    public FileManager(Shibacraft plugin, String fileName) {
+    public YamlManager(Shibacraft plugin, String fileName) {
         this(plugin, fileName, plugin.getDataFolder());
     }
 

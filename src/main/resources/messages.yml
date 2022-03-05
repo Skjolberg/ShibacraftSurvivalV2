@@ -1,4 +1,4 @@
-Prefix: '&8[&5Shibacraft&8]&r'
+Prefix: '&8[&dShibacraft&8]&r'
 NoPermission: '{prefix} &cNo tienes permiso para usar este comando.'
 InvalidArgument: '{prefix} &cArgumento inválido.'
 PluginReload: '{prefix} &aEl plugin ha sido recargado.'
@@ -13,7 +13,7 @@ CitySuccessfullyAdded: '{prefix} &aCiudad añadida con éxito.'
 CityAlreadyAdded: '{prefix} &cEsa ciudad ya existe.'
 InvitationSent: '{prefix} &aInvitación enviada a &5{citizen}.'
 CitizenPending: '{prefix} &5{citizen}&c ya ha sido invitado por tí o por alguien.'
-HasBeenInvited: '{prefix} &aHas sido invitado por &5{president}&a para unirte a &5{city}&a.
+HasBeenInvited: '{prefix} &aHas sido invitado por &5{president}&a para unirte a &b{city}&a.
 Escribe en el chat "&bconfirmar&a" para unirte. Tienes &e15&a segundos para responder sino la invitación quedará invalidada.'
 InvitationAccepted: '{prefix} &a¡Has aceptado la invitación para unirte a &5{city}&a!'
 HasAcceptedInvitation: '{prefix} &a¡&e{citizen}&a ha aceptado la invitación!'

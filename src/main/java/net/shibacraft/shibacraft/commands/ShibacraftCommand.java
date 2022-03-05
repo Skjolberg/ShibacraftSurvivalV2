@@ -1,7 +1,7 @@
 package net.shibacraft.shibacraft.commands;
 
 import net.shibacraft.shibacraft.Shibacraft;
-import net.shibacraft.shibacraft.fileManager.FileManager;
+import net.shibacraft.shibacraft.manager.files.YamlManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -21,10 +21,10 @@ public class ShibacraftCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command shibacraft, String label, String[] args) {
 
         Player user = (Player) sender;
-        FileManager messagesFile = new FileManager(plugin, "messages");
-        FileManager ayudaFile = new FileManager(plugin, "ayuda");
-        FileManager ciudadesFile = new FileManager(plugin, "ayuda");
-        FileManager walletFile = new FileManager(plugin, "ayuda");
+        YamlManager messagesFile = new YamlManager(plugin, "messages");
+        YamlManager ayudaFile = new YamlManager(plugin, "ayuda");
+        YamlManager ciudadesFile = new YamlManager(plugin, "ayuda");
+        YamlManager walletFile = new YamlManager(plugin, "ayuda");
 
         final String prefix = messagesFile.getString("Prefix");
         if (args.length > 0) {

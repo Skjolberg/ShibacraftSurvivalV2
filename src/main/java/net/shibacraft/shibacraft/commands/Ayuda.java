@@ -2,7 +2,7 @@ package net.shibacraft.shibacraft.commands;
 
 
 import net.shibacraft.shibacraft.Shibacraft;
-import net.shibacraft.shibacraft.fileManager.FileManager;
+import net.shibacraft.shibacraft.manager.files.YamlManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -24,8 +24,8 @@ public class Ayuda implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command ayuda, String label, String[] args) {
 
         Player user = (Player) sender;
-        FileManager ayudaFile = new FileManager(plugin, "ayuda");
-        FileManager messagesFile = new FileManager(plugin, "messages");
+        YamlManager ayudaFile = new YamlManager(plugin, "ayuda");
+        YamlManager messagesFile = new YamlManager(plugin, "messages");
         final String prefix = messagesFile.getString("Prefix");
 
         if (args.length > 0) {

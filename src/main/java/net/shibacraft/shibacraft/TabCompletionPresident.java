@@ -41,6 +41,7 @@ public class TabCompletionPresident implements TabCompleter {
         } else if(args[0].equalsIgnoreCase("remove") & args.length == 2){
             arguments.clear();
             arguments.add("user");
+            arguments.add("city");
             for(String i : arguments){
                 if(i.toLowerCase().startsWith(args[1].toLowerCase())){
                     result.add(i);

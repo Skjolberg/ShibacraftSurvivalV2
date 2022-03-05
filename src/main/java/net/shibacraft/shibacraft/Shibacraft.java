@@ -2,8 +2,8 @@ package net.shibacraft.shibacraft;
 
 import net.shibacraft.shibacraft.listeners.CitizenChatInvitationListener;
 import net.shibacraft.shibacraft.commands.*;
-import net.shibacraft.shibacraft.fileManager.FileManager;
-import net.shibacraft.shibacraft.playerManager.PlayerManager;
+import net.shibacraft.shibacraft.manager.files.YamlManager;
+import net.shibacraft.shibacraft.manager.players.PlayerInvitationManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -16,18 +16,17 @@ import java.util.Objects;
 public final class Shibacraft extends JavaPlugin {
 
     PluginDescriptionFile pdf = getDescription();
-    public String version = ChatColor.GREEN + pdf.getVersion() + ChatColor.WHITE;
+    //public String version = ChatColor.GREEN + pdf.getVersion() + ChatColor.WHITE;
     public String nombre = ChatColor.LIGHT_PURPLE + getName() + ChatColor.WHITE;
 
     public void onEnable() {
-        PlayerManager playerManager = new PlayerManager();
+        PlayerInvitationManager playerManager = new PlayerInvitationManager();
         registerListeners(playerManager);
         registerFiles();
         registerConfig();
         registerCommands(playerManager);
         FileConfiguration config = getConfig();
-        Bukkit.getConsoleSender()
-                .sendMessage(ChatColor.WHITE + "[" + nombre + "]" + " is now enabled (version: " + version + ")");
+        //Bukkit.getConsoleSender().sendMessage(ChatColor.WHITE + "[" + nombre + "]" + " is now enabled (version: " + version + ")");
         if (config.getBoolean("Wallet")) {
             Bukkit.getConsoleSender()
                     .sendMessage(ChatColor.translateAlternateColorCodes('&', ChatColor.WHITE + "[" + nombre + "]" + " &bWallet: &atrue"));
@@ -93,7 +92,7 @@ public final class Shibacraft extends JavaPlugin {
     /*
      * Commands
      */
-    public void registerCommands(PlayerManager playerManager) {
+    public void registerCommands(PlayerInvitationManager playerManager) {
         Objects.requireNonNull(this.getCommand("Shibacraft")).setExecutor(new ShibacraftCommand(this));
         Objects.requireNonNull(this.getCommand("Shibacraft")).setPermission("shibacraft.admin");
         Objects.requireNonNull(this.getCommand("Shibacraft")).setTabCompleter(new TabCompletionShibacraft());
@@ -131,7 +130,7 @@ public final class Shibacraft extends JavaPlugin {
      * Listeners
      */
 
-    public void registerListeners(PlayerManager playerManager){
+    public void registerListeners(PlayerInvitationManager playerManager) {
         this.getServer().getPluginManager().registerEvents(new CitizenChatInvitationListener(this, playerManager), this);
     }
 
@@ -152,9 +151,9 @@ public final class Shibacraft extends JavaPlugin {
      */
     private void registerFiles() {
 
-        new FileManager(this, "ayuda");
-        new FileManager(this, "messages");
-        new FileManager(this, "ciudades");
-        new FileManager(this, "wallet");
+        new YamlManager(this, "ayuda");
+        new YamlManager(this, "messages");
+        new YamlManager(this, "ciudades");
+        new YamlManager(this, "wallet");
     }
 }

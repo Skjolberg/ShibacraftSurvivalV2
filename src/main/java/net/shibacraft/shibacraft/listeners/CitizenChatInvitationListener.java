@@ -5,8 +5,8 @@ import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.node.types.SuffixNode;
 import net.shibacraft.shibacraft.Shibacraft;
-import net.shibacraft.shibacraft.fileManager.FileManager;
-import net.shibacraft.shibacraft.playerManager.PlayerManager;
+import net.shibacraft.shibacraft.manager.files.YamlManager;
+import net.shibacraft.shibacraft.manager.players.PlayerInvitationManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -19,10 +19,10 @@ import java.util.List;
 public class CitizenChatInvitationListener implements Listener{
 
     private final Shibacraft plugin;
-    private final PlayerManager playerManager;
+    private final PlayerInvitationManager playerManager;
     private final LuckPerms luckPermsAPI = LuckPermsProvider.get();
 
-    public CitizenChatInvitationListener(Shibacraft plugin, PlayerManager playerManager) {
+    public CitizenChatInvitationListener(Shibacraft plugin, PlayerInvitationManager playerManager) {
         this.plugin = plugin;
         this.playerManager = playerManager;
     }
@@ -38,8 +38,8 @@ public class CitizenChatInvitationListener implements Listener{
         if (event.getMessage().equalsIgnoreCase("confirmar")) {
             event.setCancelled(true);
 
-            FileManager ciudadesFile = new FileManager(plugin, "ciudades");
-            FileManager messagesFile = new FileManager(plugin, "messages");
+            YamlManager ciudadesFile = new YamlManager(plugin, "ciudades");
+            YamlManager messagesFile = new YamlManager(plugin, "messages");
             Player presidente = Bukkit.getPlayer(playerManager.getPresidentUUID(player.getUniqueId()));
             final String prefix = messagesFile.getString("Prefix");
             List<String> ciudadanos = ciudadesFile.getStringList(presidente.getName() + ".ciudadanos");
