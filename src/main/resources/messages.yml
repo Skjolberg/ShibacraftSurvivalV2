@@ -16,6 +16,7 @@ CitizenPending: '{prefix} &5{citizen}&c ya ha sido invitado por tí o por alguie
 HasBeenInvited: '{prefix} &aHas sido invitado por &5{president}&a para unirte a &b{city}&a.
 Escribe en el chat "&bconfirmar&a" para unirte. Tienes &e15&a segundos para responder sino la invitación quedará invalidada.'
 InvitationAccepted: '{prefix} &a¡Has aceptado la invitación para unirte a &5{city}&a!'
+CitySuccessfullyEliminated: '{prefix} &a¡Se ha eliminado con éxito la ciudad y los ciudadanos!'
 HasAcceptedInvitation: '{prefix} &a¡&e{citizen}&a ha aceptado la invitación!'
 CitizenListHeader: '&5&m----&r &b&nCiudadanos&r &5&m----'
 CitizenListFooter: '&5&m-------------------'

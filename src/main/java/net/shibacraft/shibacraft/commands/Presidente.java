@@ -106,7 +106,10 @@ public class Presidente implements CommandExecutor {
                         });
 
                     }
-                    user.sendMessage("Se han removido todos los usuarios");
+                    if (messagesFile.getString("CitySuccessfullyEliminated").length() > 0) {
+                        user.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                                messagesFile.getString("CitySuccessfullyEliminated").replace("{prefix}", prefix)));
+                    }
                     ciudadesFile.set(user.getName(), null);
                     ciudadesFile.save();
                     ciudadesFile.reload();
