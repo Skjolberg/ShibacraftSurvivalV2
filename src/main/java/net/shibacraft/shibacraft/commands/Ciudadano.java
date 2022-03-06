@@ -6,6 +6,7 @@ import net.luckperms.api.model.user.User;
 import net.luckperms.api.node.types.SuffixNode;
 import net.shibacraft.shibacraft.Shibacraft;
 import net.shibacraft.shibacraft.manager.files.YamlManager;
+import net.shibacraft.shibacraft.utils.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -18,6 +19,7 @@ import java.util.List;
 public class Ciudadano implements CommandExecutor, Listener {
     private Shibacraft plugin;
     private LuckPerms luckPermsAPI = LuckPermsProvider.get();
+    private Utils utils;
 
     public Ciudadano(Shibacraft plugin) {
 
@@ -45,7 +47,7 @@ public class Ciudadano implements CommandExecutor, Listener {
                             ciudadesFile.save();
                             ciudadesFile.reload();
                             String suffix = "&f[&b" + ciudadesFile.getString(i + ".nombre") + "&f]&r";
-                            removeSuffix(userLP, suffix);
+                            utils.removeSuffix(userLP, suffix);
                             if (messagesFile.getString("CitizenAbandon").length() > 0) {
                                 user.sendMessage(ChatColor.translateAlternateColorCodes('&',
                                         messagesFile.getString("CitizenAbandon").replace("{city}", ciudadesFile.getString(i + ".nombre")).replace("{prefix}", prefix)));
@@ -60,26 +62,11 @@ public class Ciudadano implements CommandExecutor, Listener {
                 }
             }
             else {
-                commandUsage(user, messagesFile);
+                utils.commandUsageCiudadano(user, messagesFile);
             }
         } else {
-            commandUsage(user, messagesFile);
+            utils.commandUsageCiudadano(user, messagesFile);
         }
         return true;
-    }
-
-    public void removeSuffix(User user, String suffix) {
-        user.data().remove(SuffixNode.builder(suffix, 1).build());
-        luckPermsAPI.getUserManager().saveUser(user);
-    }
-    public void commandUsage(Player p, YamlManager f){
-        if (!f.getStringList("UsageCitizen").isEmpty()) {
-            List<String> usageCommand;
-            usageCommand = f.getStringList("UsageCitizen");
-            for (String i : usageCommand) {
-                p.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                        i));
-            }
-        }
     }
 }

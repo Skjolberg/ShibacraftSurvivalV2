@@ -4,6 +4,7 @@ import net.shibacraft.shibacraft.listeners.CitizenChatInvitationListener;
 import net.shibacraft.shibacraft.commands.*;
 import net.shibacraft.shibacraft.manager.files.YamlManager;
 import net.shibacraft.shibacraft.manager.players.PlayerInvitationManager;
+import net.shibacraft.shibacraft.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -21,10 +22,11 @@ public final class Shibacraft extends JavaPlugin {
 
     public void onEnable() {
         PlayerInvitationManager playerManager = new PlayerInvitationManager();
+        Utils utils = new Utils();
         registerListeners(playerManager);
         registerFiles();
         registerConfig();
-        registerCommands(playerManager);
+        registerCommands(playerManager, utils);
         FileConfiguration config = getConfig();
         //Bukkit.getConsoleSender().sendMessage(ChatColor.WHITE + "[" + nombre + "]" + " is now enabled (version: " + version + ")");
         if (config.getBoolean("Wallet")) {
@@ -92,8 +94,8 @@ public final class Shibacraft extends JavaPlugin {
     /*
      * Commands
      */
-    public void registerCommands(PlayerInvitationManager playerManager) {
-        Objects.requireNonNull(this.getCommand("Shibacraft")).setExecutor(new ShibacraftCommand(this));
+    public void registerCommands(PlayerInvitationManager playerManager, Utils utils) {
+        Objects.requireNonNull(this.getCommand("Shibacraft")).setExecutor(new net.shibacraft.shibacraft.commands.Shibacraft(this, utils));
         Objects.requireNonNull(this.getCommand("Shibacraft")).setPermission("shibacraft.admin");
         Objects.requireNonNull(this.getCommand("Shibacraft")).setTabCompleter(new TabCompletionShibacraft());
 
@@ -116,7 +118,7 @@ public final class Shibacraft extends JavaPlugin {
             Objects.requireNonNull(this.getCommand("Ayuda")).setExecutor(new Ayuda(this));
         }
         if (getConfig().getBoolean("Presidente")) {
-            Objects.requireNonNull(this.getCommand("Presidente")).setExecutor(new Presidente(this, playerManager));
+            Objects.requireNonNull(this.getCommand("Presidente")).setExecutor(new Presidente(this, playerManager, utils));
             Objects.requireNonNull(this.getCommand("Presidente")).setTabCompleter(new TabCompletionPresident());
             Objects.requireNonNull(this.getCommand("Presidente")).setPermission("shibacraft.presidente");
         }

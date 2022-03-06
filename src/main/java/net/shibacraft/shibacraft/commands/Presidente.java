@@ -4,7 +4,6 @@ import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.model.user.UserManager;
-import net.luckperms.api.node.types.SuffixNode;
 import net.shibacraft.shibacraft.Shibacraft;
 import net.shibacraft.shibacraft.manager.files.YamlManager;
 import net.shibacraft.shibacraft.manager.players.PlayerInvitationManager;
@@ -26,12 +25,13 @@ public class Presidente implements CommandExecutor {
     private final Shibacraft plugin;
     private final LuckPerms luckPermsAPI = LuckPermsProvider.get();
     private final PlayerInvitationManager playerManager;
+    private final Utils utils;
 
-
-    public Presidente(Shibacraft plugin, PlayerInvitationManager playerManager) {
+    public Presidente(Shibacraft plugin, PlayerInvitationManager playerManager, Utils utils) {
 
         this.plugin = plugin;
         this.playerManager = playerManager;
+        this.utils = utils;
     }
 
     @Override
@@ -65,7 +65,7 @@ public class Presidente implements CommandExecutor {
                             CompletableFuture<User> userFuture = userManager.loadUser(player.getUniqueId());
 
                             userFuture.thenAcceptAsync(userI -> {
-                                removeSuffix(userI, suffix);
+                                utils.removeSuffix(userI, suffix);
                             });
 
                             ciudadanos.remove(ciudadanos.indexOf(i));
@@ -102,7 +102,7 @@ public class Presidente implements CommandExecutor {
                         CompletableFuture<User> userFuture = userManager.loadUser(player.getUniqueId());
 
                         userFuture.thenAcceptAsync(userI -> {
-                            removeSuffix(userI, suffix);
+                            utils.removeSuffix(userI, suffix);
                         });
 
                     }
@@ -141,9 +141,6 @@ public class Presidente implements CommandExecutor {
                     }
                 }
             } else if (args[0].equalsIgnoreCase("add") && args[1].equalsIgnoreCase("user") && args.length > 2) {
-                //String name = Bukkit.getServer().getPlayer(UUID).getName();
-                //Player invited = Bukkit.getServer().getPlayer(args[2]);
-
                 if (!ciudadesFile.contains(user.getName())) {
                     user.sendMessage(ChatColor.translateAlternateColorCodes('&',
                             messagesFile.getString("CreateCityFirst").replace("{prefix}", prefix)));
@@ -227,7 +224,7 @@ public class Presidente implements CommandExecutor {
                         ciudadesFile.save();
                         ciudadesFile.reload();
                         String suffix = "&f[&b" + args[2] + "&f]&r";
-                        addSuffix(userLP, suffix);
+                        utils.addSuffix(userLP, suffix);
                     } else {
                         if (messagesFile.getString("NoChangeNameCity").length() > 0) {
                             user.sendMessage(ChatColor.translateAlternateColorCodes('&',
@@ -241,32 +238,13 @@ public class Presidente implements CommandExecutor {
                     }
                 }
             } else {
-                commandUsage(user, messagesFile);
+                utils.commandUsagePresidente(user, messagesFile);
             }
         } else {
-            commandUsage(user, messagesFile);
+            utils.commandUsagePresidente(user, messagesFile);
         }
         return true;
     }
 
-    public void addSuffix(User user, String suffix) {
-        user.data().add(SuffixNode.builder(suffix, 1).build());
-        luckPermsAPI.getUserManager().saveUser(user);
-    }
 
-    public void removeSuffix(User user, String suffix) {
-        user.data().remove(SuffixNode.builder(suffix, 1).build());
-        luckPermsAPI.getUserManager().saveUser(user);
-    }
-
-    public void commandUsage(Player p, YamlManager f) {
-        List<String> usageCommand;
-        usageCommand = f.getStringList("UsagePresident");
-        if (!usageCommand.isEmpty()) {
-            for (String i : usageCommand) {
-                p.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                        i));
-            }
-        }
-    }
 }
