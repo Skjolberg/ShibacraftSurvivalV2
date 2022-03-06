@@ -17,7 +17,7 @@ import java.util.Objects;
 public final class Shibacraft extends JavaPlugin {
 
     PluginDescriptionFile pdf = getDescription();
-    //public String version = ChatColor.GREEN + pdf.getVersion() + ChatColor.WHITE;
+    public String version = ChatColor.GREEN + pdf.getVersion() + ChatColor.WHITE;
     public String nombre = ChatColor.LIGHT_PURPLE + getName() + ChatColor.WHITE;
 
     public void onEnable() {
@@ -28,7 +28,14 @@ public final class Shibacraft extends JavaPlugin {
         registerConfig();
         registerCommands(playerManager, utils);
         FileConfiguration config = getConfig();
-        //Bukkit.getConsoleSender().sendMessage(ChatColor.WHITE + "[" + nombre + "]" + " is now enabled (version: " + version + ")");
+        Bukkit.getConsoleSender().sendMessage(ChatColor.WHITE + "[" + nombre + "]" + " is now enabled (version: " + version + ")");
+        if(Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")){
+            Bukkit.getConsoleSender()
+                    .sendMessage(ChatColor.translateAlternateColorCodes('&',"[" + nombre + "]" + " &bHook with PlaceholderAPI succesfully"));
+        } else {
+            getLogger().severe(ChatColor.translateAlternateColorCodes('&',"[" + nombre + "]" + " &bPlaceholderAPI not found"));
+        }
+
         if (config.getBoolean("Wallet")) {
             Bukkit.getConsoleSender()
                     .sendMessage(ChatColor.translateAlternateColorCodes('&', ChatColor.WHITE + "[" + nombre + "]" + " &bWallet: &atrue"));
@@ -125,6 +132,7 @@ public final class Shibacraft extends JavaPlugin {
         if (getConfig().getBoolean("Ciudadano")) {
             Objects.requireNonNull(this.getCommand("Ciudadano")).setExecutor(new Ciudadano(this));
             Objects.requireNonNull(this.getCommand("Ciudadano")).setTabCompleter(new TabCompletionCitizen());
+            Objects.requireNonNull(this.getCommand("Ciudadano")).setPermission("shibacraft.ciudadano");
         }
     }
 

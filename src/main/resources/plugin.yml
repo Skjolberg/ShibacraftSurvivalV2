@@ -1,5 +1,5 @@
 name: Shibacraft
-version: "${version}"
+version: "0.0.1"
 main: net.shibacraft.shibacraft.Shibacraft
 api-version: 1.17
 authors: [ SKJOLBERG ]
