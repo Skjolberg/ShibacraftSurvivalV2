@@ -13,7 +13,7 @@ public class YamlManager extends YamlConfiguration {
     private final String fileName;
     private final Shibacraft plugin;
     private File file;
-    private File folder;
+    private final File folder;
 
     public YamlManager(Shibacraft plugin, String fileName, File folder) {
         this.folder = folder;

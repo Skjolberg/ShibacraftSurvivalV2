@@ -1,39 +1,26 @@
 package net.shibacraft.shibacraft.commands;
 
-import net.luckperms.api.LuckPermsProvider;
-import net.luckperms.api.model.user.User;
-import net.luckperms.api.model.user.UserManager;
 import net.shibacraft.shibacraft.Shibacraft;
-import net.shibacraft.shibacraft.dependencies.LuckPermsDependency;
 import net.shibacraft.shibacraft.manager.files.YamlManager;
 import net.shibacraft.shibacraft.service.ShibacraftService;
 import net.shibacraft.shibacraft.utils.Utils;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-
 public class ShibacraftCommand implements CommandExecutor {
 
     private final net.shibacraft.shibacraft.Shibacraft plugin;
-    private final net.luckperms.api.LuckPerms luckPermsAPI = LuckPermsProvider.get();
-    private final LuckPermsDependency luckPermsDependency;
     private final ShibacraftService shibacraftService;
 
-    public ShibacraftCommand(Shibacraft plugin, LuckPermsDependency luckPermsDependency, ShibacraftService shibacraftService) {
+    public ShibacraftCommand(Shibacraft plugin, ShibacraftService shibacraftService) {
 
         this.plugin = plugin;
-        this.luckPermsDependency = luckPermsDependency;
         this.shibacraftService = shibacraftService;
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command shibacraft, String label, String[] args) {
-
 
         YamlManager messagesFile = new YamlManager(plugin, "messages");
         YamlManager ayudaFile = new YamlManager(plugin, "ayuda");

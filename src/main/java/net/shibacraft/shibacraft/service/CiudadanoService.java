@@ -3,7 +3,6 @@ package net.shibacraft.shibacraft.service;
 import net.shibacraft.shibacraft.Shibacraft;
 import net.shibacraft.shibacraft.manager.files.YamlManager;
 import net.shibacraft.shibacraft.utils.Utils;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.List;

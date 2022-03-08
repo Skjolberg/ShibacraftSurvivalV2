@@ -4,15 +4,9 @@ package net.shibacraft.shibacraft.commands;
 import net.shibacraft.shibacraft.Shibacraft;
 import net.shibacraft.shibacraft.manager.files.YamlManager;
 import net.shibacraft.shibacraft.utils.Utils;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.entity.Player;
-
-import java.io.Console;
 import java.util.List;
 
 public class Ayuda implements CommandExecutor {

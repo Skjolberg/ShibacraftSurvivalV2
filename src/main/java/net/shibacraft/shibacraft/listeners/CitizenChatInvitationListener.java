@@ -10,7 +10,6 @@ import net.shibacraft.shibacraft.manager.players.PlayerInvitationManager;
 import net.shibacraft.shibacraft.service.PresidenteService;
 import net.shibacraft.shibacraft.utils.Utils;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

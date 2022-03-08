@@ -3,12 +3,9 @@ package net.shibacraft.shibacraft.commands;
 import net.shibacraft.shibacraft.Shibacraft;
 import net.shibacraft.shibacraft.manager.files.YamlManager;
 import net.shibacraft.shibacraft.utils.Utils;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.entity.Player;
 
 public class Web implements CommandExecutor {
 

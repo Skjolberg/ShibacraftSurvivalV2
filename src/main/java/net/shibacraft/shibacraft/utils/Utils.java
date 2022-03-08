@@ -3,7 +3,6 @@ package net.shibacraft.shibacraft.utils;
 import net.shibacraft.shibacraft.Shibacraft;
 import net.shibacraft.shibacraft.manager.files.YamlManager;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 
 import java.util.regex.Pattern;
 
