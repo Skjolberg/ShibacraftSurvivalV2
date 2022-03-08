@@ -4,6 +4,7 @@ package net.shibacraft.shibacraft.commands;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.shibacraft.shibacraft.Shibacraft;
 import net.shibacraft.shibacraft.manager.files.YamlManager;
+import net.shibacraft.shibacraft.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -24,15 +25,14 @@ public class Wallet implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command ayuda, String label, String[] args) {
 
-        if (sender == null) {
-            Bukkit.getConsoleSender().sendMessage(
-                    "[" + plugin.nombre + "]" + ChatColor.RED + " You cant run this command from the console.");
-            return false;
+        YamlManager messagesFile = new YamlManager(plugin, "messages");
+
+        if (!(sender instanceof Player user)) {
+            Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&',
+                    messagesFile.getString("ConsoleSender").replace("{prefix}", Utils.getPrefixMessages())));
         } else {
-            Player user = (Player) sender;
+
             YamlManager fileManager = new YamlManager(plugin, "wallet");
-            YamlManager messagesFile = new YamlManager(plugin, "messages");
-            final String prefix = messagesFile.getString("Prefix");
 
             if (args.length > 0) {
                 for (String fileSection : fileManager.getKeys(false)) {
@@ -47,8 +47,8 @@ public class Wallet implements CommandExecutor {
                         }
                         return true;
                     } else if (args.length > 1) {
-                        user.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                                messagesFile.getString("messages.InvalidArgument").replace("{prefix}", prefix)));
+                        user.sendMessage(Utils.toLegacyColors(
+                                messagesFile.getString("messages.InvalidArgument").replace("{prefix}", Utils.getPrefixMessages())));
                         return true;
                     }
                 }
@@ -56,7 +56,7 @@ public class Wallet implements CommandExecutor {
                 List<String> sectionList;
                 sectionList = fileManager.getStringList("1");
                 for (String i : sectionList) {
-                    String placeHolder = ChatColor.translateAlternateColorCodes('&',
+                    String placeHolder = Utils.toLegacyColors(
                             i);
                     placeHolder = PlaceholderAPI.setPlaceholders(user.getPlayer(), placeHolder);
                     user.sendMessage(placeHolder);

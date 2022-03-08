@@ -1,9 +1,13 @@
 package net.shibacraft.shibacraft;
 
+import net.shibacraft.shibacraft.dependencies.LuckPermsDependency;
 import net.shibacraft.shibacraft.listeners.CitizenChatInvitationListener;
 import net.shibacraft.shibacraft.commands.*;
 import net.shibacraft.shibacraft.manager.files.YamlManager;
 import net.shibacraft.shibacraft.manager.players.PlayerInvitationManager;
+import net.shibacraft.shibacraft.service.CiudadanoService;
+import net.shibacraft.shibacraft.service.PresidenteService;
+import net.shibacraft.shibacraft.service.ShibacraftService;
 import net.shibacraft.shibacraft.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -22,75 +26,77 @@ public final class Shibacraft extends JavaPlugin {
 
     public void onEnable() {
         PlayerInvitationManager playerManager = new PlayerInvitationManager();
-        Utils utils = new Utils();
-        registerListeners(playerManager);
+        Utils utils = new Utils(this);
+        PresidenteService presidenteService = new PresidenteService(this);
+        CiudadanoService ciudadanoService = new CiudadanoService(this);
+        LuckPermsDependency luckPermsDependency = new LuckPermsDependency();
+        ShibacraftService shibacraftService = new ShibacraftService(this, luckPermsDependency);
+        registerListeners(playerManager, luckPermsDependency, utils, presidenteService);
         registerFiles();
         registerConfig();
-        registerCommands(playerManager, utils);
+        registerCommands(playerManager, presidenteService, ciudadanoService, luckPermsDependency, shibacraftService);
         FileConfiguration config = getConfig();
-        Bukkit.getConsoleSender().sendMessage(ChatColor.WHITE + "[" + nombre + "]" + " is now enabled (version: " + version + ")");
         if(Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")){
-            Bukkit.getConsoleSender()
-                    .sendMessage(ChatColor.translateAlternateColorCodes('&',"[" + nombre + "]" + " &bHook with PlaceholderAPI succesfully"));
+            getLogger().info("PlaceholderAPI: Habilitado");
         } else {
-            getLogger().severe(ChatColor.translateAlternateColorCodes('&',"[" + nombre + "]" + " &bPlaceholderAPI not found"));
+            getLogger().warning("PlaceholderAPI: Deshabilitado");
         }
 
         if (config.getBoolean("Wallet")) {
             Bukkit.getConsoleSender()
-                    .sendMessage(ChatColor.translateAlternateColorCodes('&', ChatColor.WHITE + "[" + nombre + "]" + " &bWallet: &atrue"));
+                    .sendMessage(Utils.toLegacyColors(ChatColor.WHITE + "[" + nombre + "]" + " &bWallet: &atrue"));
         } else {
             Bukkit.getConsoleSender()
-                    .sendMessage(ChatColor.translateAlternateColorCodes('&', ChatColor.WHITE + "[" + nombre + "]" + " &bWallet: &4false"));
+                    .sendMessage(Utils.toLegacyColors(ChatColor.WHITE + "[" + nombre + "]" + " &bWallet: &4false"));
         }
         if (config.getBoolean("Discord")) {
             Bukkit.getConsoleSender()
-                    .sendMessage(ChatColor.translateAlternateColorCodes('&', ChatColor.WHITE + "[" + nombre + "]" + " &bDiscord: &atrue"));
+                    .sendMessage(Utils.toLegacyColors(ChatColor.WHITE + "[" + nombre + "]" + " &bDiscord: &atrue"));
         } else {
             Bukkit.getConsoleSender()
-                    .sendMessage(ChatColor.translateAlternateColorCodes('&', ChatColor.WHITE + "[" + nombre + "]" + " &bDiscord: &4false"));
+                    .sendMessage(Utils.toLegacyColors(ChatColor.WHITE + "[" + nombre + "]" + " &bDiscord: &4false"));
         }
         if (config.getBoolean("Mapa")) {
             Bukkit.getConsoleSender()
-                    .sendMessage(ChatColor.translateAlternateColorCodes('&', ChatColor.WHITE + "[" + nombre + "]" + " &bMapa: &atrue"));
+                    .sendMessage(Utils.toLegacyColors(ChatColor.WHITE + "[" + nombre + "]" + " &bMapa: &atrue"));
         } else {
             Bukkit.getConsoleSender()
-                    .sendMessage(ChatColor.translateAlternateColorCodes('&', ChatColor.WHITE + "[" + nombre + "]" + " &bMapa: &4false"));
+                    .sendMessage(Utils.toLegacyColors(ChatColor.WHITE + "[" + nombre + "]" + " &bMapa: &4false"));
         }
         if (config.getBoolean("Web")) {
             Bukkit.getConsoleSender()
-                    .sendMessage(ChatColor.translateAlternateColorCodes('&', ChatColor.WHITE + "[" + nombre + "]" + " &bWeb: &atrue"));
+                    .sendMessage(Utils.toLegacyColors(ChatColor.WHITE + "[" + nombre + "]" + " &bWeb: &atrue"));
         } else {
             Bukkit.getConsoleSender()
-                    .sendMessage(ChatColor.translateAlternateColorCodes('&', ChatColor.WHITE + "[" + nombre + "]" + " &bWeb: &4false"));
+                    .sendMessage(Utils.toLegacyColors(ChatColor.WHITE + "[" + nombre + "]" + " &bWeb: &4false"));
         }
         if (config.getBoolean("Wiki")) {
             Bukkit.getConsoleSender()
-                    .sendMessage(ChatColor.translateAlternateColorCodes('&', ChatColor.WHITE + "[" + nombre + "]" + " &bWiki: &atrue"));
+                    .sendMessage(Utils.toLegacyColors(ChatColor.WHITE + "[" + nombre + "]" + " &bWiki: &atrue"));
         } else {
             Bukkit.getConsoleSender()
-                    .sendMessage(ChatColor.translateAlternateColorCodes('&', ChatColor.WHITE + "[" + nombre + "]" + " &bWiki: &4false"));
+                    .sendMessage(Utils.toLegacyColors(ChatColor.WHITE + "[" + nombre + "]" + " &bWiki: &4false"));
         }
         if (config.getBoolean("Ayuda")) {
             Bukkit.getConsoleSender()
-                    .sendMessage(ChatColor.translateAlternateColorCodes('&', ChatColor.WHITE + "[" + nombre + "]" + " &bAyuda: &atrue"));
+                    .sendMessage(Utils.toLegacyColors(ChatColor.WHITE + "[" + nombre + "]" + " &bAyuda: &atrue"));
         } else {
             Bukkit.getConsoleSender()
-                    .sendMessage(ChatColor.translateAlternateColorCodes('&', ChatColor.WHITE + "[" + nombre + "]" + " &bAyuda: &4false"));
+                    .sendMessage(Utils.toLegacyColors(ChatColor.WHITE + "[" + nombre + "]" + " &bAyuda: &4false"));
         }
         if (config.getBoolean("Presidente")) {
             Bukkit.getConsoleSender()
-                    .sendMessage(ChatColor.translateAlternateColorCodes('&', ChatColor.WHITE + "[" + nombre + "]" + " &bPresidente: &atrue"));
+                    .sendMessage(Utils.toLegacyColors(ChatColor.WHITE + "[" + nombre + "]" + " &bPresidente: &atrue"));
         } else {
             Bukkit.getConsoleSender()
-                    .sendMessage(ChatColor.translateAlternateColorCodes('&', ChatColor.WHITE + "[" + nombre + "]" + " &bPresidente: &4false"));
+                    .sendMessage(Utils.toLegacyColors(ChatColor.WHITE + "[" + nombre + "]" + " &bPresidente: &4false"));
         }
         if (config.getBoolean("Ciudadano")) {
             Bukkit.getConsoleSender()
-                    .sendMessage(ChatColor.translateAlternateColorCodes('&', ChatColor.WHITE + "[" + nombre + "]" + " &bCiudadano: &atrue"));
+                    .sendMessage(Utils.toLegacyColors(ChatColor.WHITE + "[" + nombre + "]" + " &bCiudadano: &atrue"));
         } else {
             Bukkit.getConsoleSender()
-                    .sendMessage(ChatColor.translateAlternateColorCodes('&', ChatColor.WHITE + "[" + nombre + "]" + " &bCiudadano: &4false"));
+                    .sendMessage(Utils.toLegacyColors(ChatColor.WHITE + "[" + nombre + "]" + " &bCiudadano: &4false"));
         }
     }
 
@@ -101,8 +107,9 @@ public final class Shibacraft extends JavaPlugin {
     /*
      * Commands
      */
-    public void registerCommands(PlayerInvitationManager playerManager, Utils utils) {
-        Objects.requireNonNull(this.getCommand("Shibacraft")).setExecutor(new net.shibacraft.shibacraft.commands.Shibacraft(this, utils));
+    public void registerCommands(PlayerInvitationManager playerManager, PresidenteService presidenteService, CiudadanoService ciudadanoService, LuckPermsDependency luckPermsDependency, ShibacraftService shibacraftService) {
+
+        Objects.requireNonNull(this.getCommand("Shibacraft")).setExecutor(new ShibacraftCommand(this, luckPermsDependency, shibacraftService));
         Objects.requireNonNull(this.getCommand("Shibacraft")).setPermission("shibacraft.admin");
         Objects.requireNonNull(this.getCommand("Shibacraft")).setTabCompleter(new TabCompletionShibacraft());
 
@@ -125,12 +132,12 @@ public final class Shibacraft extends JavaPlugin {
             Objects.requireNonNull(this.getCommand("Ayuda")).setExecutor(new Ayuda(this));
         }
         if (getConfig().getBoolean("Presidente")) {
-            Objects.requireNonNull(this.getCommand("Presidente")).setExecutor(new Presidente(this, playerManager, utils));
+            Objects.requireNonNull(this.getCommand("Presidente")).setExecutor(new Presidente(this, playerManager, presidenteService, luckPermsDependency));
             Objects.requireNonNull(this.getCommand("Presidente")).setTabCompleter(new TabCompletionPresident());
             Objects.requireNonNull(this.getCommand("Presidente")).setPermission("shibacraft.presidente");
         }
         if (getConfig().getBoolean("Ciudadano")) {
-            Objects.requireNonNull(this.getCommand("Ciudadano")).setExecutor(new Ciudadano(this));
+            Objects.requireNonNull(this.getCommand("Ciudadano")).setExecutor(new Ciudadano(this, ciudadanoService, luckPermsDependency));
             Objects.requireNonNull(this.getCommand("Ciudadano")).setTabCompleter(new TabCompletionCitizen());
             Objects.requireNonNull(this.getCommand("Ciudadano")).setPermission("shibacraft.ciudadano");
         }
@@ -140,8 +147,8 @@ public final class Shibacraft extends JavaPlugin {
      * Listeners
      */
 
-    public void registerListeners(PlayerInvitationManager playerManager) {
-        this.getServer().getPluginManager().registerEvents(new CitizenChatInvitationListener(this, playerManager), this);
+    public void registerListeners(PlayerInvitationManager playerManager, LuckPermsDependency luckPermsDependency, Utils utils, PresidenteService presidenteService) {
+        this.getServer().getPluginManager().registerEvents(new CitizenChatInvitationListener(this, playerManager, luckPermsDependency, utils, presidenteService), this);
     }
 
     /*
